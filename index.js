@@ -1,48 +1,19 @@
 const express = require("express");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
+const app = express();
 const path = require("path");
 
 require("dotenv").config();
-const connectDB = require("./config/db");
-const router = require("./routes");
-
-const app = express();
-
-// Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true,
-}));
+const dbConfig = require("./config/dbconfig");
 app.use(express.json());
-app.use(cookieParser());
-
-// Serve static files
-app.use(express.static(path.resolve(__dirname, "frontend", "build")));
-
-// Routes
-app.use("/api", router);
-
-// Default route
+const userRoute = require("./routes/userRoute");
+const songsRoute = require("./routes/songsRoute");
+const adminRoute = require("./routes/adminRoute");
 app.get("/", (req, res) => {
+  app.use(express.static(path.resolve(__dirname, "frontend", "build")));
   res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
 });
-
-const PORT = process.env.PORT || 8080;
-
-// Lambda handler function
-exports.handler = async (event, context) => {
-  // Ensure DB connection
-  await connectDB();
-
-  // Proxy the event to Express server
-  const response = await new Promise((resolve, reject) => {
-    app(event, {
-      // Dummy context
-      succeed: resolve,
-      fail: reject
-    });
-  });
-
-  return response;
-};
+app.use("/api/users", userRoute);
+app.use("/api/songs", songsRoute);
+app.use("/api/admin", adminRoute);
+const port = 5000;
+app.listen(port, () => console.log(`node js server started at port ${port}!`));
