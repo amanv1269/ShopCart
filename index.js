@@ -3,7 +3,7 @@ const app = express();
 const path = require("path");
 
 require("dotenv").config();
-const dbConfig = require("./config/dbconfig");
+const dbConfig = require("./config/db");
 app.use(express.json());
 const userRoute = require("./routes/userRoute");
 const songsRoute = require("./routes/songsRoute");
