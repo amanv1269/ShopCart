@@ -5,9 +5,9 @@ const path = require("path");
 require("dotenv").config();
 const dbConfig = require("./config/db");
 app.use(express.json());
-const userRoute = require("./routes/userRoute");
-const songsRoute = require("./routes/songsRoute");
-const adminRoute = require("./routes/adminRoute");
+const userRoute = require("./routes/index");
+const songsRoute = require("./routes/index");
+const adminRoute = require("./routes/index");
 app.get("/", (req, res) => {
   app.use(express.static(path.resolve(__dirname, "frontend", "build")));
   res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
