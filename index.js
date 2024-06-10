@@ -8,27 +8,32 @@ const connectDB = require("./config/db");
 const router = require("./routes");
 
 const app = express();
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-  })
-);
-app.get("/", (req, res) => {
-  app.use(express.static(path.resolve(__dirname, "frontend", "build")));
-  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-});
 
+// Middleware
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  credentials: true,
+}));
 app.use(express.json());
 app.use(cookieParser());
 
+// Serve static files
+app.use(express.static(path.resolve(__dirname, "frontend", "build")));
+
+// Routes
 app.use("/api", router);
 
-const PORT = 8080 || process.env.PORT;
+// Default route
+app.get("/", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+});
 
+const PORT = process.env.PORT || 8080;
+
+// Connect to MongoDB and start server
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log("connnect to DB");
-    console.log("Server is running " + PORT);
+    console.log("Connected to DB");
+    console.log("Server is running on port " + PORT);
   });
 });
