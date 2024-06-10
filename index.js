@@ -30,10 +30,19 @@ app.get("/", (req, res) => {
 
 const PORT = process.env.PORT || 8080;
 
-// Connect to MongoDB and start server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log("Connected to DB");
-    console.log("Server is running on port " + PORT);
+// Lambda handler function
+exports.handler = async (event, context) => {
+  // Ensure DB connection
+  await connectDB();
+
+  // Proxy the event to Express server
+  const response = await new Promise((resolve, reject) => {
+    app(event, {
+      // Dummy context
+      succeed: resolve,
+      fail: reject
+    });
   });
-});
+
+  return response;
+};
